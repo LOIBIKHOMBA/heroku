@@ -1,16 +1,17 @@
 // To parse this JSON data, do
 //
-//     final albums = albumsFromJson(jsonString);
+//     final albumsModel = albumsModelFromJson(jsonString);
 
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-Albums albumsFromJson(String str) => Albums.fromJson(json.decode(str));
+AlbumsModel albumsModelFromJson(String str) =>
+    AlbumsModel.fromJson(json.decode(str));
 
-String albumsToJson(Albums data) => json.encode(data.toJson());
+String albumsModelToJson(AlbumsModel data) => json.encode(data.toJson());
 
-class Albums {
-  Albums({
+class AlbumsModel {
+  AlbumsModel({
     required this.data,
     required this.meta,
   });
@@ -18,7 +19,7 @@ class Albums {
   final List<Datum> data;
   final Meta meta;
 
-  factory Albums.fromJson(Map<String, dynamic> json) => Albums(
+  factory AlbumsModel.fromJson(Map<String, dynamic> json) => AlbumsModel(
         data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
         meta: Meta.fromJson(json["meta"]),
       );
@@ -52,8 +53,7 @@ class Datum {
 class Attributes {
   Attributes({
     required this.albumName,
-    required this.releaseDate,
-    required this.duration,
+    this.duration,
     required this.artistName,
     required this.createdAt,
     required this.updatedAt,
@@ -61,8 +61,7 @@ class Attributes {
   });
 
   final String albumName;
-  final DateTime releaseDate;
-  final int duration;
+  final int? duration;
   final String artistName;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -70,7 +69,6 @@ class Attributes {
 
   factory Attributes.fromJson(Map<String, dynamic> json) => Attributes(
         albumName: json["album_name"],
-        releaseDate: DateTime.parse(json["release_date"]),
         duration: json["duration"],
         artistName: json["artist_name"],
         createdAt: DateTime.parse(json["createdAt"]),
@@ -80,9 +78,7 @@ class Attributes {
 
   Map<String, dynamic> toJson() => {
         "album_name": albumName,
-        "release_date":
-            "${releaseDate.year.toString().padLeft(4, '0')}-${releaseDate.month.toString().padLeft(2, '0')}-${releaseDate.day.toString().padLeft(2, '0')}",
-        "duration": duration,
+        "duration": duration == null ? null : duration,
         "artist_name": artistName,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),

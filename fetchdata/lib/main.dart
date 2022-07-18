@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:fetchdata/model/albums.dart';
 import 'package:fetchdata/service/service.api.dart';
 import 'package:flutter/material.dart';
@@ -31,19 +33,20 @@ class ListUPdate extends StatefulWidget {
 }
 
 class _ListUPdateState extends State<ListUPdate> {
+  List<Datum> d = [];
   List data = ["santa", "lobii", "m"];
   final prefs = SharedPreferences.getInstance();
 
-  List<Datum> d = [];
-
   @override
   void initState() {
+    log('ok');
     super.initState();
     getdata();
   }
 
   getdata() async {
-    var data = await ServiceApi().getdata();
+    var data = await ServiceApi().fetchAlbum();
+
     setState(() {
       d = data.data;
     });
@@ -51,13 +54,16 @@ class _ListUPdateState extends State<ListUPdate> {
 
   @override
   Widget build(BuildContext context) {
+    log('yade');
     return Scaffold(
       appBar: AppBar(
         title: const Text("Display Data From Backend"),
       ),
       body: ListView.builder(
+        shrinkWrap: true,
         itemCount: d.length,
         itemBuilder: (c, i) {
+          log('yaroidro');
           return Text(d[i].attributes.albumName);
         },
       ),
@@ -68,13 +74,19 @@ class _ListUPdateState extends State<ListUPdate> {
                 builder: (c) {
                   return AlertDialog(
                     title: const Text("Add new data"),
-                    content: const TextField(),
+                    content: const TextField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'enter any data',
+                      ),
+                    ),
                     actions: [
                       TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: const Text("Add"))
+                          child: const Text("Post"))
                     ],
                   );
                 });
